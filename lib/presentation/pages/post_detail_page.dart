@@ -1,12 +1,12 @@
-import 'package:eds_test/data/models/comment_model.dart';
-import 'package:eds_test/data/models/post_model.dart';
-import 'package:eds_test/data/services/api_service.dart';
-import 'package:eds_test/presentation/shared_widgets/comment_card.dart';
-import 'package:eds_test/presentation/shared_widgets/custom_text_field.dart';
-import 'package:eds_test/presentation/shared_widgets/loader.dart';
-import 'package:eds_test/presentation/theme/app_colors.dart';
-import 'package:eds_test/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+
+import '../../data/models/comment_model.dart';
+import '../../data/models/post_model.dart';
+import '../../data/services/api_service.dart';
+import '../../presentation/shared_widgets/comment_card.dart';
+import '../../presentation/shared_widgets/custom_text_field.dart';
+import '../../presentation/shared_widgets/loader.dart';
+import '../../presentation/theme/app_text_styles.dart';
 
 class PostDetailPage extends StatefulWidget {
   final PostModel post;
@@ -118,8 +118,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
       appBar: AppBar(
         title: Text(widget.post.title),
         centerTitle: true,
-        titleTextStyle: AppTextStyles.title,
-        backgroundColor: AppColors.gray,
       ),
       body: _isLoading
           ? const Loader()

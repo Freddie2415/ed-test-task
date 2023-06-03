@@ -1,17 +1,17 @@
-import 'package:eds_test/data/models/album_model.dart';
-import 'package:eds_test/data/models/post_model.dart';
-import 'package:eds_test/data/models/user_model.dart';
-import 'package:eds_test/data/services/api_service.dart';
-import 'package:eds_test/presentation/album_detail_page.dart';
-import 'package:eds_test/presentation/all_albums_page.dart';
-import 'package:eds_test/presentation/all_posts_page.dart';
-import 'package:eds_test/presentation/post_detail_page.dart';
-import 'package:eds_test/presentation/shared_widgets/album_card.dart';
-import 'package:eds_test/presentation/shared_widgets/loader.dart';
-import 'package:eds_test/presentation/shared_widgets/post_card.dart';
-import 'package:eds_test/presentation/theme/app_colors.dart';
-import 'package:eds_test/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+
+import '../../data/models/album_model.dart';
+import '../../data/models/post_model.dart';
+import '../../data/models/user_model.dart';
+import '../../data/services/api_service.dart';
+import '../../presentation/pages/album_detail_page.dart';
+import '../../presentation/shared_widgets/album_card.dart';
+import '../../presentation/shared_widgets/loader.dart';
+import '../../presentation/shared_widgets/post_card.dart';
+import '../../presentation/theme/app_text_styles.dart';
+import 'all_albums_page.dart';
+import 'all_posts_page.dart';
+import 'post_detail_page.dart';
 
 class UserPage extends StatefulWidget {
   final UserModel userModel;
@@ -45,12 +45,9 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Text(widget.userModel.username),
         centerTitle: true,
-        titleTextStyle: AppTextStyles.title,
-        backgroundColor: AppColors.gray,
       ),
       body: _isLoading
           ? const Loader()

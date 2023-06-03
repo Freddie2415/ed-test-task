@@ -1,11 +1,11 @@
-import 'package:eds_test/data/models/user_model.dart';
-import 'package:eds_test/data/services/api_service.dart';
-import 'package:eds_test/presentation/theme/app_colors.dart';
-import 'package:eds_test/presentation/theme/app_text_styles.dart';
-import 'package:eds_test/presentation/user_page.dart';
 import 'package:flutter/material.dart';
 
-import 'shared_widgets/loader.dart';
+import '../../data/models/user_model.dart';
+import '../../data/services/api_service.dart';
+import '../../presentation/theme/app_colors.dart';
+import '../../presentation/theme/app_text_styles.dart';
+import '../shared_widgets/loader.dart';
+import 'user_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -32,12 +32,9 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: const Text('All Users'),
         centerTitle: true,
-        titleTextStyle: AppTextStyles.title,
-        backgroundColor: AppColors.gray,
       ),
       body: _isLoading
           ? const Loader()

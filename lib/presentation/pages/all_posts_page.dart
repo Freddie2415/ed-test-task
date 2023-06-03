@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../data/models/post_model.dart';
-import '../data/models/user_model.dart';
+import '../../data/models/post_model.dart';
+import '../../data/models/user_model.dart';
+import '../shared_widgets/post_card.dart';
 import 'post_detail_page.dart';
-import 'shared_widgets/post_card.dart';
-import 'theme/app_colors.dart';
-import 'theme/app_text_styles.dart';
 
 class AllPostsPage extends StatefulWidget {
   final UserModel user;
@@ -25,12 +23,9 @@ class _AllPostsPageState extends State<AllPostsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Text(widget.user.username),
         centerTitle: true,
-        titleTextStyle: AppTextStyles.title,
-        backgroundColor: AppColors.gray,
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
