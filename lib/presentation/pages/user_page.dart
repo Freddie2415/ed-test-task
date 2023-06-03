@@ -1,9 +1,9 @@
+import 'package:eds_test/presentation/manager/user/user_cubit.dart';
+import 'package:eds_test/presentation/shared_widgets/failure_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/models/album_model.dart';
-import '../../data/models/post_model.dart';
 import '../../data/models/user_model.dart';
-import '../../data/services/api_service.dart';
 import '../../presentation/pages/album_detail_page.dart';
 import '../../presentation/shared_widgets/album_card.dart';
 import '../../presentation/shared_widgets/loader.dart';
@@ -13,66 +13,48 @@ import 'all_albums_page.dart';
 import 'all_posts_page.dart';
 import 'post_detail_page.dart';
 
-class UserPage extends StatefulWidget {
+class UserPage extends StatelessWidget {
   final UserModel userModel;
 
   const UserPage({Key? key, required this.userModel}) : super(key: key);
 
   @override
-  State<UserPage> createState() => _UserPageState();
-}
-
-class _UserPageState extends State<UserPage> {
-  bool _isLoading = true;
-  List<PostModel> posts = List.empty();
-  List<AlbumModelWithPhotos> albums = List.empty();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      posts = await ApiService.getPostsByUserId(widget.userModel.id);
-      albums =
-          await ApiService.getAlbumsByUserIdWithPhotos(widget.userModel.id);
-      setState(() {
-        _isLoading = false;
-        posts = posts;
-        albums = albums;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.userModel.username),
+        title: Text(userModel.username),
         centerTitle: true,
       ),
-      body: _isLoading
-          ? const Loader()
-          : SingleChildScrollView(
+      body: BlocBuilder<UserCubit, UserState>(
+        bloc: UserCubit(userModel),
+        builder: (context, state) {
+          if (state is UserFailure) {
+            return FailureWidget(message: state.message);
+          }
+
+          if (state is UserSuccess) {
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Name: ${widget.userModel.name}',
+                    'Name: ${userModel.name}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Email: ${widget.userModel.email}',
+                    'Email: ${userModel.email}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Phone: ${widget.userModel.phone}',
+                    'Phone: ${userModel.phone}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Website: ${widget.userModel.website}',
+                    'Website: ${userModel.website}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 16),
@@ -82,17 +64,17 @@ class _UserPageState extends State<UserPage> {
                   ),
                   const SizedBox(height: 7),
                   Text(
-                    'Name: ${widget.userModel.company.name}',
+                    'Name: ${userModel.company.name}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 7),
                   Text(
-                    'BS: ${widget.userModel.company.bs}',
+                    'BS: ${userModel.company.bs}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 7),
                   Text(
-                    "Catch phase: '${widget.userModel.company.catchPhrase}'",
+                    "Catch phase: '${userModel.company.catchPhrase}'",
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 16),
@@ -102,12 +84,12 @@ class _UserPageState extends State<UserPage> {
                   ),
                   const SizedBox(height: 7),
                   Text(
-                    'City: ${widget.userModel.address.city}',
+                    'City: ${userModel.address.city}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 7),
                   Text(
-                    'Street: ${widget.userModel.address.street}',
+                    'Street: ${userModel.address.street}',
                     style: AppTextStyles.bodyTextStyle,
                   ),
                   const SizedBox(height: 16),
@@ -125,8 +107,8 @@ class _UserPageState extends State<UserPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AllPostsPage(
-                                user: widget.userModel,
-                                posts: posts,
+                                user: userModel,
+                                posts: state.posts,
                               ),
                             ),
                           );
@@ -147,7 +129,7 @@ class _UserPageState extends State<UserPage> {
                       height: 16,
                     ),
                     itemBuilder: (context, index) {
-                      final post = posts[index];
+                      final post = state.posts[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push<void>(
@@ -180,8 +162,8 @@ class _UserPageState extends State<UserPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AllAlbumsPage(
-                                user: widget.userModel,
-                                albums: albums,
+                                user: userModel,
+                                albums: state.albums,
                               ),
                             ),
                           );
@@ -202,7 +184,7 @@ class _UserPageState extends State<UserPage> {
                       height: 16,
                     ),
                     itemBuilder: (context, index) {
-                      final album = albums[index];
+                      final album = state.albums[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push<void>(
@@ -222,7 +204,12 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ],
               ),
-            ),
+            );
+          }
+
+          return const Loader();
+        },
+      ),
     );
   }
 }
