@@ -1,8 +1,10 @@
+import 'package:eds_test/presentation/manager/comments/comments_cubit.dart';
+import 'package:eds_test/presentation/manager/connectivity/connectivity_cubit.dart';
+import 'package:eds_test/presentation/shared_widgets/failure_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/models/comment_model.dart';
 import '../../data/models/post_model.dart';
-import '../../data/services/api_service.dart';
 import '../../presentation/shared_widgets/comment_card.dart';
 import '../../presentation/shared_widgets/custom_text_field.dart';
 import '../../presentation/shared_widgets/loader.dart';
@@ -21,23 +23,9 @@ class PostDetailPage extends StatefulWidget {
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
-  List<CommentModel> comments = List.empty();
-  bool _isLoading = true;
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController commentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      comments = await ApiService.getCommentsByPostId(widget.post.id);
-      setState(() {
-        _isLoading = false;
-        comments = comments;
-      });
-    });
-  }
 
   void _clearText() {
     nameController.clear();
@@ -97,7 +85,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             TextButton(
               child: const Text('Submit'),
               onPressed: () {
-                ApiService.sendComment(
+                BlocProvider.of<CommentsCubit>(context).submit(
                   name: nameController.text,
                   email: emailController.text,
                   body: commentController.text,
@@ -119,9 +107,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
         title: Text(widget.post.title),
         centerTitle: true,
       ),
-      body: _isLoading
-          ? const Loader()
-          : ListView(
+      body: BlocBuilder<CommentsCubit, CommentsState>(
+        bloc: BlocProvider.of<CommentsCubit>(context)..load(widget.post.id),
+        builder: (context, state) {
+          if (state is CommentsFailure) {
+            return FailureWidget(message: state.message);
+          }
+
+          if (state is CommentsSuccess) {
+            return ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 Text(
@@ -149,23 +143,35 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    final comment = comments[index];
+                    final comment = state.comments[index];
                     return CommentCard(
                       username: comment.name,
                       comment: comment.body,
                       email: comment.email,
                     );
                   },
-                  itemCount: comments.length,
+                  itemCount: state.comments.length,
                 ),
               ],
+            );
+          }
+
+          return const Loader();
+        },
+      ),
+      floatingActionButton: BlocBuilder<ConnectivityCubit, bool>(
+        builder: (context, isConnected) {
+          if (!isConnected) {
+            return const SizedBox();
+          }
+          return FloatingActionButton(
+            child: const Icon(
+              Icons.add,
+              size: 20,
             ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(
-          Icons.add,
-          size: 20,
-        ),
-        onPressed: () => _displayDialog(context),
+            onPressed: () => _displayDialog(context),
+          );
+        },
       ),
     );
   }

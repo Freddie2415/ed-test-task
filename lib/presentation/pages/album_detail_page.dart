@@ -25,9 +25,18 @@ class AlbumDetailPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  Image(
-                    image: NetworkImage(
-                      album.photos[index].url,
+                  AspectRatio(
+                    aspectRatio: 1,
+                    child: Image.network(
+                      album.photos.first.thumbnailUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, _, __) {
+                        return  const Icon(
+                          Icons.image,
+                          size: 250,
+                          color: Colors.grey,
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(

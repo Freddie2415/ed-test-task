@@ -1,8 +1,18 @@
-class CommentModel {
+import 'package:hive/hive.dart';
+
+part 'comment_model.g.dart';
+
+@HiveType(typeId: 7)
+class CommentModel extends HiveObject{
+  @HiveField(0)
   final int postId;
+  @HiveField(1)
   final int id;
+  @HiveField(2)
   final String name;
+  @HiveField(3)
   final String email;
+  @HiveField(4)
   final String body;
 
   CommentModel({

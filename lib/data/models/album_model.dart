@@ -1,8 +1,15 @@
 import 'package:eds_test/data/models/photo_model.dart';
+import 'package:hive/hive.dart';
 
-class AlbumModel {
+part 'album_model.g.dart';
+
+@HiveType(typeId: 8)
+class AlbumModel extends HiveObject{
+  @HiveField(0)
   final int userId;
+  @HiveField(1)
   final int id;
+  @HiveField(2)
   final String title;
 
   AlbumModel({
@@ -18,7 +25,9 @@ class AlbumModel {
       );
 }
 
+@HiveType(typeId: 9)
 class AlbumModelWithPhotos extends AlbumModel {
+  @HiveField(3)
   final List<PhotoModel> photos;
 
   AlbumModelWithPhotos({

@@ -1,12 +1,32 @@
-class UserModel {
+import 'package:eds_test/data/models/album_model.dart';
+import 'package:eds_test/data/models/post_model.dart';
+import 'package:hive/hive.dart';
+
+part 'user_model.g.dart';
+
+@HiveType(typeId: 1)
+class UserModel extends HiveObject {
+  @HiveField(0)
   final int id;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final String username;
+  @HiveField(3)
   final String email;
+  @HiveField(4)
   final Address address;
+  @HiveField(5)
   final String phone;
+  @HiveField(6)
   final String website;
+  @HiveField(7)
   final Company company;
+
+  @HiveField(8)
+  HiveList<PostModel>? posts;
+  @HiveField(9)
+  HiveList<AlbumModelWithPhotos>? albums;
 
   UserModel({
     required this.id,
@@ -31,11 +51,17 @@ class UserModel {
       );
 }
 
-class Address {
+@HiveType(typeId: 2)
+class Address extends HiveObject {
+  @HiveField(0)
   final String street;
+  @HiveField(1)
   final String suite;
+  @HiveField(2)
   final String city;
+  @HiveField(3)
   final String zipcode;
+  @HiveField(4)
   final Geo geo;
 
   Address({
@@ -55,8 +81,11 @@ class Address {
       );
 }
 
-class Geo {
+@HiveType(typeId: 3)
+class Geo extends HiveObject {
+  @HiveField(0)
   final String lat;
+  @HiveField(1)
   final String lng;
 
   Geo({
@@ -70,9 +99,13 @@ class Geo {
       );
 }
 
-class Company {
+@HiveType(typeId: 4)
+class Company extends HiveObject {
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String catchPhrase;
+  @HiveField(2)
   final String bs;
 
   Company({

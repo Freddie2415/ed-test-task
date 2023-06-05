@@ -26,7 +26,7 @@ class UserPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: BlocBuilder<UserCubit, UserState>(
-        bloc: UserCubit(userModel),
+        bloc: BlocProvider.of<UserCubit>(context)..load(userModel),
         builder: (context, state) {
           if (state is UserFailure) {
             return FailureWidget(message: state.message);
@@ -122,7 +122,7 @@ class UserPage extends StatelessWidget {
                     ],
                   ),
                   ListView.separated(
-                    itemCount: 3,
+                    itemCount: state.posts.length > 3 ? 3 : state.posts.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     separatorBuilder: (_, __) => const SizedBox(
@@ -177,7 +177,8 @@ class UserPage extends StatelessWidget {
                     ],
                   ),
                   ListView.separated(
-                    itemCount: 3,
+                    itemCount:
+                        state.albums.length > 3 ? 3 : state.albums.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     separatorBuilder: (_, __) => const SizedBox(

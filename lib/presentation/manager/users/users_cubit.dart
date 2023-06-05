@@ -1,15 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/user_model.dart';
-import '../../../data/services/api_service.dart';
+import '../../../data/repositories/user_repository.dart';
 
 part 'users_state.dart';
 
 class UsersCubit extends Cubit<UsersState> {
-  UsersCubit() : super(UsersInitial()) {
+  final UserRepository userRepository;
+
+  UsersCubit(this.userRepository) : super(UsersInitial()) {
     load();
   }
 
@@ -17,11 +17,8 @@ class UsersCubit extends Cubit<UsersState> {
     emit(UsersLoading());
 
     try {
-      final list = await ApiService.getAllUsers();
-
-      emit(UsersSuccess(list: list));
-    } on SocketException {
-      emit(UsersFailure('Network error! Please check internet connection!'));
+      final users = await userRepository.getAllUsers();
+      emit(UsersSuccess(list: users));
     } catch (e) {
       emit(UsersFailure(e.toString()));
     }

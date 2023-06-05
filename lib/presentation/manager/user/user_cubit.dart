@@ -1,25 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:eds_test/data/models/album_model.dart';
-import 'package:eds_test/data/services/api_service.dart';
 
 import '../../../data/models/post_model.dart';
 import '../../../data/models/user_model.dart';
+import '../../../data/repositories/user_repository.dart';
 
 part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
-  final UserModel user;
+  final UserRepository userRepository;
 
-  UserCubit(this.user) : super(UserInitial()) {
-    load();
-  }
+  UserCubit(this.userRepository) : super(UserInitial());
 
-  Future<void> load() async {
+  Future<void> load(UserModel user) async {
     emit(UserLoading());
 
     try {
-      final posts = await ApiService.getPostsByUserId(user.id);
-      final albums = await ApiService.getAlbumsByUserIdWithPhotos(user.id);
+      final posts = await userRepository.getPostsByUserId(user.id);
+      final albums = await userRepository.getAlbumsByUserIdWithPhotos(user.id);
 
       emit(
         UserSuccess(
